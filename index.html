@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تکلیف های 904</title>
+<style>
+body {
+  margin:0;
+  padding:0;
+  font-family:'Vazirmatn',sans-serif;
+  background:#0b0d10;
+  color:#e6eef3;
+}
+.container {
+  max-width:1200px;
+  margin:0 auto;
+  padding:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
+}
+.card {
+  background:#0f1418;
+  padding:20px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,0.06);
+  box-shadow:0 6px 18px rgba(2,6,10,0.6);
+  display:flex;
+  flex-direction:column;
+  max-height:500px;
+  overflow-y:auto;
+}
+.day-title {
+  font-size:18px;
+  margin-bottom:12px;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+  padding-bottom:6px;
+}
+.task {
+  background:rgba(255,255,255,0.02);
+  padding:10px;
+  border-radius:12px;
+  margin-bottom:10px;
+  white-space: pre-line;
+  word-wrap: break-word;
+}
+.title {
+  font-weight:600;
+}
+.desc {
+  font-size:14px;
+  color:#9aa3ad;
+  margin-top:4px;
+  white-space: pre-line;
+  word-wrap: break-word;
+}
+</style>
+</head>
+<body>
+<h1 style="text-align:center; padding:20px 0;">تکالیف 904</h1>
+<div class="container" id="cards"></div>
+<script>
+const DAYS=['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنج‌شنبه','جمعه','متفرقه'];
+
+async function loadAndRender(){
+  try{
+    const res=await fetch('data.json',{cache:'no-store'});
+    const tasks=await res.json();
+    const grouped={};
+    DAYS.forEach(d=>grouped[d]=[]);
+    tasks.forEach(t=>{const day=t.day||'متفرقه';grouped[day].push(t);});
+
+    const cards=document.getElementById('cards');
+    cards.innerHTML='';
+
+    DAYS.forEach(day=>{
+      const card=document.createElement('div');
+      card.className='card';
+
+      const h=document.createElement('div');
+      h.className='day-title';
+      h.textContent=day;
+      card.appendChild(h);
+
+      const list=document.createElement('div');
+      (grouped[day]||[]).forEach(t=>{
+        const el=document.createElement('div');
+        el.className='task';
+
+        const title=document.createElement('div');
+        title.className='title';
+        title.textContent=t.title||'';
+
+        const desc=document.createElement('div');
+        desc.className='desc';
+        desc.textContent=t.description||'';
+
+        el.appendChild(title);
+        el.appendChild(desc);
+        list.appendChild(el);
+      });
+
+      if(list.children.length===0){
+        const empty=document.createElement('div');
+        empty.className='task';
+        empty.textContent='تکلیفی ثبت نشده';
+        list.appendChild(empty);
+      }
+
+      card.appendChild(list);
+      cards.appendChild(card);
+    });
+  }catch(e){
+    console.error(e);
+    document.getElementById('cards').innerHTML='<div style="color:red">خطا در بارگذاری تکالیف</div>';
+  }
+}
+
+window.addEventListener('DOMContentLoaded',loadAndRender);
+</script>
+</body>
+</html>
