@@ -147,7 +147,7 @@ body {
   font-weight: 700;
   margin-bottom: 15px;
   padding-bottom: 10px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color); /* خط اصلی مشکل اینجا بود که `padding` چپ و راست صفر بود. */
   color: var(--accent-primary);
 }
 
@@ -190,8 +190,6 @@ body {
   border-top: 1px solid var(--border-color);
   color: var(--text-secondary);
 }
-
-/* --- Add these styles to your existing style.css file --- */
 
 /* --- General Page Title --- */
 .page-title {
@@ -347,18 +345,6 @@ body {
     color: var(--text-secondary);
 }
 
-/* Responsive styles for schedule */
-@media (max-width: 768px) {
-    .schedule-grid {
-        display: flex;
-        flex-direction: column;
-    }
-    .grid-header {
-        display: none; /* Hide headers on small screens */
-    }
-    /* You can add more complex responsive logic if needed */
-}
-
 /* --- Hero Section Buttons --- */
 .hero-buttons {
     display: flex;
@@ -379,8 +365,6 @@ body {
     color: var(--bg-dark);
     transform: translateY(-3px);
 }
-/* --- Add these styles to the end of your style.css file --- */
-
 /* --- Schedule Page - Active/Inactive Week Styles --- */
 .alternating .subject {
     display: flex;
@@ -413,4 +397,76 @@ body {
     content: '/';
     margin-right: 5px;
     opacity: 0.4;
+}
+
+/*
+==============================================
+--- 📱 RESPONSIVE STYLES FOR MOBILE 📱 ---
+==============================================
+*/
+@media (max-width: 768px) {
+
+    /* --- General Layout --- */
+    .container {
+        padding: 0 15px;
+    }
+
+    /* --- Header & Navigation --- */
+    .top-header .container {
+        flex-direction: column; /* Stacks logo and nav vertically */
+        gap: 15px;
+    }
+    .main-nav {
+        flex-wrap: wrap; /* Allows nav items to wrap to the next line */
+        justify-content: center;
+        gap: 10px;
+    }
+    .nav-link {
+        font-size: 15px;
+    }
+
+    /* --- Hero Section --- */
+    .hero-section {
+        padding: 60px 0;
+    }
+    .hero-title {
+        font-size: 32px; /* Smaller title for mobile */
+    }
+    .hero-subtitle {
+        font-size: 18px; /* Smaller subtitle for mobile */
+    }
+    .hero-buttons {
+        flex-direction: column; /* Stacks buttons vertically */
+        align-items: center;
+    }
+    .btn {
+        width: 80%;
+    }
+    
+    /* --- Cards Layout (Tasks Page) --- */
+    #cards {
+        gap: 15px;
+        padding: 20px 15px; /* <-- تنها تغییر اینجاست */
+    }
+
+    /* --- Date Page --- */
+    .date-card {
+        width: 100%; /* Makes date cards full-width */
+        max-width: 320px;
+    }
+    .date-body .day {
+        font-size: 60px; /* Slightly smaller number for the day */
+    }
+     .date-body .month-year {
+        font-size: 18px;
+    }
+
+    /* --- Schedule Page --- */
+    .schedule-grid {
+        display: flex;
+        flex-direction: column; /* Stacks schedule rows vertically */
+    }
+    .grid-header {
+        display: none; /* Hides the horizontal header on mobile */
+    }
 }
