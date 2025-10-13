@@ -1,47 +1,416 @@
+/* --- General Variables & Setup --- */
 :root {
-  --bg: #0b0d10;
-  --card: #0f1418;
-  --muted: #9aa3ad;
-  --accent: #6ee7b7;
-  --border: rgba(255,255,255,0.06);
+  --bg-dark: #0d1117;
+  --bg-light: #161b22;
+  --border-color: #30363d;
+  --text-primary: #c9d1d9;
+  --text-secondary: #8b949e;
+  --accent-primary: #58a6ff;
+  --accent-secondary: #3fb950;
+  --font-family: 'Vazirmatn', sans-serif;
+  --border-radius: 12px;
+  --transition-speed: 0.3s;
 }
+
 body {
-  margin:0;
-  font-family: 'Vazirmatn', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-  background: linear-gradient(180deg,#040506 0%,#0b0f12 100%);
-  color: #e6eef3;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  line-height: 1.6;
 }
-.top {
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* --- Header & Navigation --- */
+.top-header {
+  background-color: var(--bg-light);
+  border-bottom: 1px solid var(--border-color);
+  padding: 15px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  background-color: rgba(22, 27, 34, 0.8);
+}
+
+.top-header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.main-nav {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 16px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: all var(--transition-speed) ease;
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+
+/* --- Hero Section (Homepage) --- */
+.hero-section {
+  padding: 100px 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 18px 28px;
-  border-bottom:1px solid var(--border);
+  min-height: 70vh;
 }
-.cards {
+
+.text-center { text-align: center; }
+.hero-title { font-size: 48px; margin-bottom: 10px; }
+.hero-subtitle { font-size: 20px; color: var(--text-secondary); margin-bottom: 30px; }
+
+/* --- Buttons --- */
+.btn {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition-speed) ease;
+}
+
+.btn-primary {
+  background-color: var(--accent-primary);
+  color: var(--bg-dark);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(88, 166, 255, 0.2);
+}
+
+
+/* --- Cards Layout (Tasks Page) --- */
+#cards {
   display: grid;
-  gap: 18px;
-  grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
-  padding: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  padding: 40px 0;
 }
+
 .card {
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 18px;
-  box-shadow: 0 6px 18px rgba(2,6,10,0.6);
-  transition: transform 0.2s ease;
+  background-color: var(--bg-light);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-speed) ease;
+  animation: fadeIn 0.5s ease forwards;
+  max-height: 500px;
+  overflow-y: auto;
 }
-.card:hover { transform: translateY(-3px); }
-.day-title { font-weight:700; margin-bottom:10px; }
-.task { padding: 12px; border-radius: 12px; margin-bottom: 10px; background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.02); }
-.task .title { font-weight:600; }
-.task .desc { color: var(--muted); font-size: 14px; }
-.task .categories { color: var(--accent); font-size: 12px; margin-top:4px; }
-.form-card { max-width:520px; margin:24px auto; }
-input, select, textarea { border-radius: 12px; border:1px solid var(--border); background: #0f1418; color:#e6eef3; padding:10px; width:100%; margin-bottom:12px; }
-select[multiple] { height: 120px; }
-.btn { background: var(--accent); border:none; padding:10px 14px; border-radius: 12px; color:#072217; cursor:pointer; }
-.btn.ghost { background:transparent; border:1px solid var(--border); color:var(--muted); }
-footer.bottom { padding:12px 24px; color:var(--muted); border-top:1px solid var(--border); text-align:center; }
-.preview-card{flex:1; min-width:300px; margin-top:20px;}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-primary);
+}
+
+.day-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--accent-primary);
+}
+
+.task {
+  background-color: var(--bg-dark);
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  border-left: 3px solid var(--border-color);
+  transition: border-color var(--transition-speed) ease;
+}
+.task:hover {
+  border-left-color: var(--accent-secondary);
+}
+
+.task .title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.task .desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  white-space: pre-line;
+  word-wrap: break-word;
+}
+
+.task .categories {
+  font-size: 12px;
+  color: var(--accent-secondary);
+  margin-top: 10px;
+}
+
+/* --- Footer --- */
+.bottom-footer {
+  text-align: center;
+  padding: 20px 0;
+  margin-top: 40px;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+/* --- Add these styles to your existing style.css file --- */
+
+/* --- General Page Title --- */
+.page-title {
+    text-align: center;
+    margin: 40px 0;
+    animation: fadeInDown 0.6s ease;
+}
+
+.page-title h2 {
+    font-size: 32px;
+    font-weight: 700;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* --- Date Page Styles --- */
+.date-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.date-card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    width: 280px;
+    text-align: center;
+    overflow: hidden;
+    transition: all var(--transition-speed) ease;
+    animation: fadeInUp 0.5s ease forwards;
+}
+.date-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.date-header {
+    padding: 12px;
+    font-weight: 600;
+    font-size: 18px;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.date-body {
+    padding: 30px 20px;
+    background-color: var(--bg-light);
+}
+
+.date-body .day {
+    font-size: 72px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.date-body .month-year {
+    font-size: 20px;
+    color: var(--text-secondary);
+    margin-top: 10px;
+}
+
+/* Specific colors for each calendar */
+.solar { border-color: #58a6ff; }
+.solar .date-header { color: #58a6ff; }
+.gregorian { border-color: #3fb950; }
+.gregorian .date-header { color: #3fb950; }
+.lunar { border-color: #f778ba; }
+.lunar .date-header { color: #f778ba; }
+
+/* Staggered animation for date cards */
+.date-card:nth-child(1) { animation-delay: 0.1s; }
+.date-card:nth-child(2) { animation-delay: 0.2s; }
+.date-card:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* --- Schedule Page Styles --- */
+.schedule-grid {
+    display: grid;
+    grid-template-columns: 1fr repeat(4, 2fr); /* 1 column for day labels, 4 for classes */
+    gap: 10px;
+    margin-top: 20px;
+    background-color: var(--bg-dark);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.grid-header, .day-label, .class-cell {
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.grid-header {
+    background-color: rgba(88, 166, 255, 0.1);
+    color: var(--accent-primary);
+    font-weight: 600;
+}
+
+.day-label {
+    background-color: var(--bg-light);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.class-cell {
+    background-color: var(--bg-light);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    transition: all var(--transition-speed) ease;
+    border: 1px solid transparent;
+}
+
+.class-cell:hover {
+    transform: scale(1.03);
+    border-color: var(--accent-primary);
+    background-color: #1f252e;
+}
+
+.class-cell .subject {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.class-cell .teacher {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+/* Responsive styles for schedule */
+@media (max-width: 768px) {
+    .schedule-grid {
+        display: flex;
+        flex-direction: column;
+    }
+    .grid-header {
+        display: none; /* Hide headers on small screens */
+    }
+    /* You can add more complex responsive logic if needed */
+}
+
+/* --- Hero Section Buttons --- */
+.hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background-color: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: var(--bg-dark);
+    transform: translateY(-3px);
+}
+/* --- Add these styles to the end of your style.css file --- */
+
+/* --- Schedule Page - Active/Inactive Week Styles --- */
+.alternating .subject {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.alternating .subject span {
+    transition: all 0.3s ease;
+}
+
+/* Style for the active class of the week */
+.alternating .subject span.active {
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: underline;
+    text-decoration-color: var(--accent-primary);
+    text-underline-offset: 4px;
+}
+
+/* Style for the inactive class of the week */
+.alternating .subject span.inactive {
+    opacity: 0.4;
+    color: var(--text-secondary);
+}
+
+/* Adds a slash separator between the two subjects */
+.alternating .subject span[data-week="odd"]::after {
+    content: '/';
+    margin-right: 5px;
+    opacity: 0.4;
+}

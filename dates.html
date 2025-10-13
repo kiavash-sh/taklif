@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقویم روز</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="top-header">
+        <div class="container">
+            <div class="logo">سیستم کلاسی 904</div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">خانه</a>
+                <a href="tasks.html" class="nav-link">مشاهده تکالیف</a>
+                <a href="schedule.html" class="nav-link">برنامه هفتگی</a>
+                <a href="dates.html" class="nav-link active">تقویم</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="page-title">
+            <h2>تقویم امروز</h2>
+        </div>
+        <div class="date-container">
+            <div class="date-card solar">
+                <div class="date-header">شمسی</div>
+                <div class="date-body" id="solar-date">
+                    <div class="day">--</div>
+                    <div class="month-year">----------</div>
+                </div>
+            </div>
+            <div class="date-card gregorian">
+                <div class="date-header">میلادی</div>
+                <div class="date-body" id="gregorian-date">
+                    <div class="day">--</div>
+                    <div class="month-year">----------</div>
+                </div>
+            </div>
+            <div class="date-card lunar">
+                <div class="date-header">قمری</div>
+                <div class="date-body" id="lunar-date">
+                    <div class="day">--</div>
+                    <div class="month-year">----------</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bottom-footer">
+        <p>&copy; 1403 - تمام حقوق برای شما محفوظ است.</p>
+    </footer>
+
+    <script>
+        function displayDates() {
+            const today = new Date();
+
+            // Gregorian Date
+            const gregorianDay = new Intl.DateTimeFormat('en-US', { day: 'numeric' }).format(today);
+            const gregorianMonthYear = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(today);
+            document.querySelector('#gregorian-date .day').textContent = gregorianDay;
+            document.querySelector('#gregorian-date .month-year').textContent = gregorianMonthYear;
+
+            // Solar Date
+            const solarDay = new Intl.DateTimeFormat('fa-IR', { day: 'numeric' }).format(today);
+            const solarMonthYear = new Intl.DateTimeFormat('fa-IR', { month: 'long', year: 'numeric' }).format(today);
+            document.querySelector('#solar-date .day').textContent = solarDay;
+            document.querySelector('#solar-date .month-year').textContent = solarMonthYear;
+
+            // Lunar Date
+            // Using 'islamic-umalqura' calendar for accuracy
+            const lunarDay = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', { day: 'numeric' }).format(today);
+            const lunarMonthYear = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', { month: 'long', year: 'numeric' }).format(today);
+            document.querySelector('#lunar-date .day').textContent = lunarDay;
+            document.querySelector('#lunar-date .month-year').textContent = lunarMonthYear;
+        }
+
+        window.addEventListener('DOMContentLoaded', displayDates);
+    </script>
+</body>
+</html>
