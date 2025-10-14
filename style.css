@@ -113,10 +113,11 @@ body {
 
 /* --- Cards Layout (Tasks Page) --- */
 #cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 25px;
+  /* We are replacing Grid with Columns for a masonry effect */
+  column-count: 3; /* Number of columns on large screens */
+  column-gap: 25px; /* Space between columns */
   padding: 40px 0;
+  /* REMOVE display: grid and its properties */
 }
 
 .card {
@@ -128,8 +129,23 @@ body {
   flex-direction: column;
   transition: all var(--transition-speed) ease;
   animation: fadeIn 0.5s ease forwards;
-  max-height: 500px;
-  overflow-y: auto;
+  
+  /* Add these two lines for Columns layout */
+  margin-bottom: 25px;   /* Space below each card */
+  break-inside: avoid;  /* Prevents a card from splitting into two columns */
+}
+
+/* Add this media query block at the end of the file for responsiveness */
+@media (max-width: 992px) {
+  #cards {
+    column-count: 2; /* 2 columns for tablets */
+  }
+}
+
+@media (max-width: 576px) {
+  #cards {
+    column-count: 1; /* 1 column for mobile */
+  }
 }
 
 @keyframes fadeIn {
