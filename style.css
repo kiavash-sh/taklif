@@ -486,3 +486,100 @@ body {
         display: none; /* Hides the horizontal header on mobile */
     }
 }
+
+/* --- Add these styles to the end of your style.css file --- */
+
+/* --- Task Overlay & Modal Styles --- */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal {
+    background-color: var(--bg-light);
+    padding: 25px 30px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    transform: translateY(20px) scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.overlay.active .modal {
+    transform: translateY(0) scale(1);
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    left: 15px; /* Changed to left for RTL */
+    background: none;
+    border: none;
+    font-size: 30px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.close-button:hover {
+    color: var(--text-primary);
+}
+
+#modal-title {
+    font-size: 24px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--accent-primary);
+}
+
+#modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.modal-task {
+    background-color: var(--bg-dark);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.modal-task-title {
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.modal-task-desc {
+    font-size: 15px;
+    color: var(--text-secondary);
+    white-space: pre-line;
+}
+
+.no-task {
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 20px;
+}
