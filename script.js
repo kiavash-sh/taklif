@@ -1,6 +1,6 @@
 const DAYS = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'متفرقه'];
 
-// تابع تبدیل تاریخ به "چند وقت پیش"
+// تابع محاسبه زمان گذشته
 function timeAgo(dateString) {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -20,44 +20,38 @@ function timeAgo(dateString) {
     return "لحظاتی پیش";
 }
 
-// تولید شناسه یکتا برای هر تسک جهت ذخیره در لوکال استوریج
+// تولید شناسه برای ذخیره تیک‌ها
 function generateTaskId(task) {
-    // ترکیب عنوان، روز و تاریخ برای ساخت یک شناسه تقریبا یکتا
     const str = `${task.title}-${task.day}-${task.description?.substring(0,10)}`;
-    // تبدیل به یک رشته ساده بدون فاصله
     return str.replace(/\s/g, '').replace(/[^a-zA-Z0-9\u0600-\u06FF]/g, '');
 }
 
-// درخواست مجوز نوتیفیکیشن
+// درخواست نوتیفیکیشن
 function requestNotificationPermission() {
     if ("Notification" in window && Notification.permission !== "granted") {
         Notification.requestPermission();
     }
 }
 
-// بررسی تکالیف جدید برای نوتیفیکیشن
+// بررسی تسک‌های جدید
 function checkNewTasks(tasks) {
     if (!("Notification" in window) || Notification.permission !== "granted") return;
 
     const storedTaskIds = JSON.parse(localStorage.getItem('knownTasks') || '[]');
     const currentTaskIds = tasks.map(t => generateTaskId(t));
     
-    // پیدا کردن تسک‌هایی که در لیست قبلی نبودند
     const newItems = tasks.filter(t => !storedTaskIds.includes(generateTaskId(t)));
 
     if (newItems.length > 0 && storedTaskIds.length > 0) {
-        // اگر اولین بازدید نیست و تسک جدیدی هست
         const msg = newItems.length === 1 
             ? `تکلیف جدید: ${newItems[0].title}` 
             : `${newItems.length} تکلیف جدید اضافه شد!`;
             
         new Notification("سیستم کلاسی 904", {
             body: msg,
-            icon: 'favicon.ico' // اگر آیکون دارید
+            icon: 'favicon.ico'
         });
     }
-
-    // ذخیره لیست فعلی برای بازدید بعدی
     localStorage.setItem('knownTasks', JSON.stringify(currentTaskIds));
 }
 
@@ -69,12 +63,11 @@ async function loadAndRender() {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         
         const data = await res.json();
-        const tasks = data.tasks || [];
+        // پشتیبانی از هر دو فرمت قدیم (آرایه) و جدید (آبجکت)
+        const tasks = Array.isArray(data) ? data : (data.tasks || []);
 
-        // بررسی نوتیفیکیشن
         checkNewTasks(tasks);
 
-        // خواندن وضعیت تیک‌ها از لوکال استوریج
         const completedTasks = JSON.parse(localStorage.getItem('completedTasks') || '{}');
 
         const grouped = {};
@@ -104,7 +97,6 @@ async function loadAndRender() {
                 const empty = document.createElement('div');
                 empty.className = 'task';
                 empty.style.opacity = '0.6';
-                empty.style.paddingLeft = '15px'; // اصلاح پدینگ برای آیتم خالی
                 empty.textContent = 'تکلیفی ثبت نشده';
                 list.appendChild(empty);
             } else {
@@ -115,7 +107,7 @@ async function loadAndRender() {
                     const el = document.createElement('div');
                     el.className = `task ${isDone ? 'completed' : ''}`;
 
-                    // --- چک‌باکس ---
+                    // Checkbox
                     const checkWrapper = document.createElement('label');
                     checkWrapper.className = 'task-checkbox-wrapper';
                     const checkbox = document.createElement('input');
@@ -123,7 +115,6 @@ async function loadAndRender() {
                     checkbox.className = 'task-checkbox';
                     checkbox.checked = isDone;
                     
-                    // ایونت تغییر وضعیت چک‌باکس
                     checkbox.addEventListener('change', (e) => {
                         const currentStatus = JSON.parse(localStorage.getItem('completedTasks') || '{}');
                         if (e.target.checked) {
@@ -138,8 +129,8 @@ async function loadAndRender() {
 
                     checkWrapper.appendChild(checkbox);
                     el.appendChild(checkWrapper);
-                    // ----------------
 
+                    // Title & Desc
                     const title = document.createElement('div');
                     title.className = 'title';
                     title.textContent = t.title || '';
@@ -150,11 +141,13 @@ async function loadAndRender() {
                     desc.textContent = t.description || '';
                     el.appendChild(desc);
 
-                    // --- زمان انتشار ---
+                    // --- Time Ago (بخش مهم) ---
+                    // بررسی می‌کنیم اگر created_at وجود دارد نمایش بده
                     if (t.created_at) {
-                        const timeBadge = document.createElement('span');
+                        const timeBadge = document.createElement('div'); // div برای خط جدید
                         timeBadge.className = 'time-badge';
-                        timeBadge.innerHTML = `⏱ ${timeAgo(t.created_at)}`;
+                        // استفاده از span برای متن جهت اطمینان از راست‌چین/چپ‌چین
+                        timeBadge.innerHTML = `<span>⏱ ${timeAgo(t.created_at)}</span>`;
                         el.appendChild(timeBadge);
                     }
                     
@@ -167,7 +160,7 @@ async function loadAndRender() {
         });
     } catch (err) {
         console.error(err);
-        document.getElementById('cards').innerHTML = '<div class="card error-card" style="color: #ff7b72;">خطا در بارگذاری.</div>';
+        document.getElementById('cards').innerHTML = '<div class="card error-card">خطا در بارگذاری اطلاعات.</div>';
     }
 }
 

@@ -448,25 +448,26 @@ body {
     letter-spacing: 0.5px;
 }
 /* --- Task Meta & Checkbox Styles --- */
+/* --- Task Meta & Checkbox Styles --- */
 .task {
-    position: relative; /* برای پوزیشن‌دهی چک‌باکس */
-    padding-left: 45px !important; /* فضای خالی سمت چپ برای چک‌باکس */
+    position: relative;
+    padding-left: 45px !important;
     transition: all 0.3s ease;
 }
 
-/* استایل حالت انجام شده */
+/* استایل حالت انجام شده (اصلاح شده) */
 .task.completed {
-    opacity: 0.6;
-    background-color: rgba(63, 185, 80, 0.1); /* سبز خیلی کمرنگ */
+    opacity: 0.5; /* کمی کمرنگ‌تر */
+    background-color: rgba(63, 185, 80, 0.05);
     border-left-color: #3fb950;
 }
 
 .task.completed .title {
-    text-decoration: line-through;
-    color: var(--text-secondary);
+    text-decoration: none; /* حذف خط‌خوردگی */
+    color: var(--text-secondary); /* رنگ متن کمی توسی می‌شود */
 }
 
-/* چک‌باکس سفارشی */
+/* استایل چک‌باکس */
 .task-checkbox-wrapper {
     position: absolute;
     top: 15px;
@@ -493,7 +494,7 @@ body {
 }
 
 .task-checkbox:checked {
-    background-color: var(--accent-secondary); /* سبز */
+    background-color: var(--accent-secondary);
     border-color: var(--accent-secondary);
 }
 
@@ -504,17 +505,18 @@ body {
     display: block;
 }
 
-/* نشانگر زمان انتشار */
+/* استایل زمان انتشار (برای اطمینان از دیده شدن) */
 .time-badge {
-    display: block;
-    font-size: 11px;
-    color: var(--text-secondary);
-    margin-top: 8px;
-    opacity: 0.8;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: var(--accent-primary); /* رنگ آبی روشن برای دیده شدن بهتر */
+    background: rgba(88, 166, 255, 0.1);
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-top: 10px;
+    opacity: 0.9;
     font-weight: 400;
-    text-align: left; /* چپ چین برای زیبایی */
-    direction: ltr;
-}
-.time-badge i {
-    margin-right: 4px;
+    direction: ltr; /* چپ چین بودن اعداد ساعت */
 }
