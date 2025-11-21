@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقویم آموزشی - کلاس 904</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://unpkg.com/moment@2.29.1/min/moment.min.js"></script>
+    <script src="https://unpkg.com/moment-jalaali@0.9.2/build/moment-jalaali.js"></script>
+</head>
+<body>
+
+    <header class="top-header">
+        <div class="container">
+            <div class="logo">سیستم کلاسی 904</div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">خانه</a>
+                <a href="tasks.html" class="nav-link">مشاهده تکالیف</a>
+                <a href="schedule.html" class="nav-link">برنامه هفتگی</a>
+                <a href="preparation.html" class="nav-link">آمادگی تعیین مرکز</a>
+                <a href="calendar.html" class="nav-link active">تقویم آموزشی</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="page-title">
+            <div class="calendar-controls">
+                <button id="prev-month" class="nav-btn">❮ ماه قبل</button>
+                <h2 id="month-title" style="margin: 0; min-width: 200px;">تقویم ماه جاری</h2>
+                <button id="next-month" class="nav-btn">ماه بعد ❯</button>
+            </div>
+            <p style="color: var(--text-secondary); margin-top: 10px;">برای مشاهده تکالیف روی روزها کلیک کنید</p>
+        </div>
+
+        <div class="calendar-wrapper">
+            <div class="calendar-header">
+                <div>شنبه</div>
+                <div>یک‌شنبه</div>
+                <div>دوشنبه</div>
+                <div>سه‌شنبه</div>
+                <div>چهارشنبه</div>
+                <div>پنج‌شنبه</div>
+                <div>جمعه</div>
+            </div>
+            <div class="calendar-grid" id="calendar-grid"></div>
+        </div>
+    </main>
+
+    <div id="task-overlay" class="overlay">
+        <div class="modal">
+            <button class="close-button">&times;</button>
+            <h3 id="modal-title"></h3>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <footer class="bottom-footer">
+        <p>&copy; 1404 - تمام حقوق برای شما محفوظ است.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            let allTasks = [];
+            let displayedDate = null; 
+
+            // نگاشت روزهای هفته برای تطابق نام روز
+            const dayNamesMap = {
+                6: 'شنبه',
+                0: 'یک‌شنبه',
+                0: 'یکشنبه', // پشتیبانی از هر دو حالت
+                1: 'دوشنبه',
+                2: 'سه‌شنبه',
+                2: 'سه شنبه',
+                3: 'چهارشنبه',
+                3: 'چهار شنبه',
+                4: 'پنج‌شنبه',
+                4: 'پنج شنبه',
+                5: 'جمعه'
+            };
+
+            try {
+                const res = await fetch('data.json', { cache: 'no-store' });
+                if (res.ok) {
+                    const data = await res.json();
+                    allTasks = Array.isArray(data) ? data : (data.tasks || []);
+                }
+            } catch (e) { console.error(e); }
+
+            if (typeof moment === 'undefined') {
+                document.getElementById('calendar-grid').innerHTML = '<div style="grid-column:1/-1; color:red; text-align:center;">خطا در لود کتابخانه تقویم.</div>';
+                return;
+            }
+
+            moment.loadPersian({usePersianDigits: true});
+            displayedDate = moment();
+
+            document.getElementById('prev-month').addEventListener('click', () => {
+                displayedDate.subtract(1, 'jMonth');
+                renderCalendar();
+            });
+
+            document.getElementById('next-month').addEventListener('click', () => {
+                displayedDate.add(1, 'jMonth');
+                renderCalendar();
+            });
+
+            function renderCalendar() {
+                const grid = document.getElementById('calendar-grid');
+                const monthTitle = document.getElementById('month-title');
+                grid.innerHTML = '';
+
+                const currentJM = displayedDate.jMonth(); 
+                const currentJY = displayedDate.jYear();
+                
+                const persianMonths = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"];
+                monthTitle.textContent = `${persianMonths[currentJM]} ${currentJY}`;
+
+                const firstOfMonth = moment(`${currentJY}/${currentJM + 1}/1`, 'jYYYY/jM/jD');
+                const daysInMonth = moment.jDaysInMonth(currentJY, currentJM);
+                
+                // شنبه=0 ... جمعه=6 برای چیدمان گرید
+                const weekDayMap = { 6: 0, 0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6 };
+                const startDayIndex = weekDayMap[firstOfMonth.day()]; 
+
+                for (let i = 0; i < startDayIndex; i++) {
+                    const empty = document.createElement('div');
+                    empty.className = 'calendar-day empty';
+                    empty.style.border = 'none';
+                    empty.style.cursor = 'default';
+                    grid.appendChild(empty);
+                }
+
+                const today = moment();
+                
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'calendar-day glass-effect';
+                    
+                    const thisDate = moment(`${currentJY}/${currentJM + 1}/${day}`, 'jYYYY/jM/jD');
+                    const isToday = thisDate.format('jYYYY/jM/jD') === today.format('jYYYY/jM/jD');
+                    
+                    cell.innerHTML = `<span class="day-number">${day}</span>`;
+                    
+                    if (isToday) {
+                        cell.classList.add('today');
+                        cell.innerHTML += '<span class="today-badge">امروز</span>';
+                    }
+
+                    const safeDate = thisDate.clone();
+                    cell.addEventListener('click', () => handleDateClick(safeDate, day, persianMonths[currentJM]));
+                    
+                    grid.appendChild(cell);
+                }
+            }
+
+            renderCalendar();
+
+            const overlay = document.getElementById('task-overlay');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+            const closeBtn = overlay.querySelector('.close-button');
+
+            function closeModal() { overlay.classList.remove('active'); }
+            closeBtn.addEventListener('click', closeModal);
+            overlay.addEventListener('click', (e) => { if(e.target === overlay) closeModal(); });
+
+            function normalizeDayName(str) {
+                if (!str) return '';
+                return str.replace(/\u200c/g, '').replace(/ /g, '').trim();
+            }
+
+            function handleDateClick(dateObj, dayNum, monthName) {
+                const todayStart = moment().startOf('day');
+                const clickedDateStart = dateObj.clone().startOf('day');
+                const diff = clickedDateStart.diff(todayStart, 'days');
+                
+                modalTitle.textContent = `${dayNum} ${monthName}`;
+                modalBody.innerHTML = '';
+
+                if (diff < 0) {
+                    modalBody.innerHTML = `<div class="calendar-msg error"><div style="font-size:40px; margin-bottom:10px;">📅❌</div>این تاریخ گذشته است.</div>`;
+                } else if (diff >= 0 && diff <= 7) {
+                    // --- بخش اصلی تغییر یافته ---
+                    // جستجوی هوشمند: هم تاریخ دقیق و هم نام روز
+                    
+                    const gregorianDate = dateObj.format('YYYY-MM-DD');
+                    // دریافت نام روز کلیک شده (مثلا شنبه)
+                    const clickedDayName = dayNamesMap[dateObj.day()]; 
+
+                    const tasks = allTasks.filter(t => {
+                        // 1. اگر تاریخ دقیق در دیتابیس هست، نشان بده
+                        if (t.date === gregorianDate) return true;
+                        
+                        // 2. اگر تاریخ دقیق نیست، اما "نام روز" یکی است (برای تکالیف هفتگی)
+                        // و چون شرط diff <= 7 برقرار است، یعنی این شنبه، همان شنبه مد نظر ماست
+                        if (clickedDayName && normalizeDayName(t.day) === normalizeDayName(clickedDayName)) {
+                            return true;
+                        }
+                        return false;
+                    });
+
+                    if (tasks.length > 0) {
+                        tasks.forEach(task => {
+                            const taskEl = document.createElement('div');
+                            taskEl.className = 'modal-task';
+                            
+                            let isDone = false;
+                            try {
+                                const str = `${task.title}-${task.day}-${task.description?.substring(0,10)}`;
+                                const taskId = str.replace(/\s/g, '').replace(/[^a-zA-Z0-9\u0600-\u06FF]/g, '');
+                                isDone = JSON.parse(localStorage.getItem('completedTasks') || '{}')[taskId];
+                            } catch(err) {}
+
+                            taskEl.innerHTML = `
+                                <div class="modal-task-title" style="${isDone ? 'text-decoration: none; opacity: 0.6; color: #8b949e;' : ''}">
+                                    ${isDone ? '✅ ' : ''}${task.title}
+                                </div>
+                                <div class="modal-task-desc">${task.description}</div>
+                            `;
+                            modalBody.appendChild(taskEl);
+                        });
+                    } else {
+                         modalBody.innerHTML = `<div class="calendar-msg info"><div style="font-size:40px; margin-bottom:10px;">✅</div>تکلیفی نیست.</div>`;
+                    }
+                } else {
+                    modalBody.innerHTML = `<div class="calendar-msg warning"><div style="font-size:40px; margin-bottom:10px;">🚧</div>بیش از یک هفته آینده (برنامه تنظیم نشده).</div>`;
+                }
+                overlay.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
