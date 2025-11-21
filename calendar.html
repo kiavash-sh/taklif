@@ -17,6 +17,8 @@
     <header class="top-header">
         <div class="container">
             <div class="logo">سیستم کلاسی 904</div>
+            <button class="menu-toggle" id="mobile-menu-btn" aria-label="منو">☰</button>
+            
             <nav class="main-nav">
                 <a href="index.html" class="nav-link">خانه</a>
                 <a href="tasks.html" class="nav-link">مشاهده تکالیف</a>
@@ -26,6 +28,17 @@
             </nav>
         </div>
     </header>
+
+    <nav id="side-menu">
+        <div class="logo" style="margin-bottom: 20px; font-size: 20px;">سیستم کلاسی 904</div>
+        <a href="index.html" class="nav-link">خانه</a>
+        <a href="tasks.html" class="nav-link">مشاهده تکالیف</a>
+        <a href="schedule.html" class="nav-link">برنامه هفتگی</a>
+        <a href="preparation.html" class="nav-link">آمادگی تعیین مرکز</a>
+        <a href="calendar.html" class="nav-link active">تقویم آموزشی</a>
+    </nav>
+
+    <div class="side-menu-overlay" id="menu-overlay"></div>
 
     <main class="container">
         <div class="page-title">
@@ -39,13 +52,13 @@
 
         <div class="calendar-wrapper">
             <div class="calendar-header">
-                <div>شنبه</div>
-                <div>یک‌شنبه</div>
-                <div>دوشنبه</div>
-                <div>سه‌شنبه</div>
-                <div>چهارشنبه</div>
-                <div>پنج‌شنبه</div>
-                <div>جمعه</div>
+                <div><span class="desktop-day">شنبه</span><span class="mobile-day">ش</span></div>
+                <div><span class="desktop-day">یک‌شنبه</span><span class="mobile-day">ی</span></div>
+                <div><span class="desktop-day">دوشنبه</span><span class="mobile-day">د</span></div>
+                <div><span class="desktop-day">سه‌شنبه</span><span class="mobile-day">س</span></div>
+                <div><span class="desktop-day">چهارشنبه</span><span class="mobile-day">چ</span></div>
+                <div><span class="desktop-day">پنج‌شنبه</span><span class="mobile-day">پ</span></div>
+                <div><span class="desktop-day">جمعه</span><span class="mobile-day">ج</span></div>
             </div>
             <div class="calendar-grid" id="calendar-grid"></div>
         </div>
@@ -231,6 +244,38 @@
                     modalBody.innerHTML = `<div class="calendar-msg warning"><div style="font-size:40px; margin-bottom:10px;">🚧</div>بیش از یک هفته آینده (برنامه تنظیم نشده).</div>`;
                 }
                 overlay.classList.add('active');
+            }
+        });
+    </script>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const sideMenu = document.getElementById('side-menu');
+            const menuOverlay = document.getElementById('menu-overlay');
+            
+            function toggleMenu(state) {
+                if (state === 'open') {
+                    // فعال‌سازی منو و بلور
+                    sideMenu.classList.add('active');
+                    menuOverlay.classList.add('active');
+                } else {
+                    // غیرفعال‌سازی منو و بلور
+                    sideMenu.classList.remove('active');
+                    menuOverlay.classList.remove('active');
+                }
+            }
+
+            if (menuBtn && sideMenu && menuOverlay) {
+                menuBtn.addEventListener('click', () => toggleMenu('open'));
+                menuOverlay.addEventListener('click', () => toggleMenu('close'));
+
+                const navLinks = sideMenu.querySelectorAll('.nav-link');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        // بستن منو بعد از کلیک روی لینک
+                        setTimeout(() => toggleMenu('close'), 100); 
+                    });
+                });
             }
         });
     </script>

@@ -778,3 +778,258 @@ body {
     border-color: var(--accent-primary);
     box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
 }
+
+/* --- Mobile Calendar Optimization --- */
+
+/* پیش‌فرض: نمایش نام کامل، مخفی کردن نام کوتاه */
+.mobile-day { display: none; }
+.desktop-day { display: inline; }
+
+/* استایل‌های مخصوص موبایل (صفحات کوچکتر از 600 پیکسل) */
+/* --- اصلاح شده: استایل‌های مخصوص موبایل برای تقویم فشرده --- */
+@media (max-width: 600px) {
+    .desktop-day { display: none; }
+    .mobile-day { display: inline; font-weight: bold; }
+    /* هدر تقویم */
+    .calendar-header {
+        font-size: 13px;
+        padding-bottom: 5px;
+        margin-bottom: 5px;
+    }
+
+    .calendar-wrapper {
+        padding: 8px;
+        margin-bottom: 80px;
+    }
+    
+    .calendar-grid {
+        gap: 3px; /* فاصله بین خانه‌ها خیلی کم */
+    }
+
+    .calendar-day {
+        min-height: 25px; /* ارتفاع خیلی کمتر */
+        padding: 2px;
+        display: flex;
+        align-items: center;     /* وسط چین عمودی */
+        justify-content: center; /* وسط چین افقی */
+        border-radius: 6px;
+    }
+
+    .day-number {
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    /* نشانگر امروز: یک نقطه کوچک زیر عدد */
+    .today-badge {
+        display: none; /* متن حذف */
+    }
+    
+    /* خود خانه امروز رنگی شود کافیست، یا یک دایره دورش باشد */
+    .calendar-day.today {
+        background: rgba(63, 185, 80, 0.2);
+        border: 1px solid var(--accent-secondary);
+        box-shadow: 0 0 5px rgba(63, 185, 80, 0.3);
+    }
+    
+    .calendar-controls h2 {
+        font-size: 15px;
+    }
+
+}
+
+/* برای گوشی‌های خیلی کوچک (مثل iPhone SE) */
+@media (max-width: 360px) {
+    .calendar-day {
+        min-height: 45px;
+    }
+    .day-number {
+        font-size: 12px;
+    }
+}
+
+/* --- Mobile Header & Hamburger Menu --- */
+
+/* دکمه منو (در حالت دسکتاپ مخفی است) */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+@media (max-width: 768px) {
+    .top-header {
+        padding: 10px 0; /* کاهش ارتفاع هدر */
+    }
+
+    .top-header .container {
+        flex-direction: row; /* لوگو و دکمه کنار هم */
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .logo {
+        font-size: 18px; /* لوگو کمی کوچکتر */
+    }
+
+    .menu-toggle {
+        display: block; /* نمایش دکمه همبرگری */
+    }
+
+    /* منوی اصلی در موبایل مخفی می‌شود و با زدن دکمه باز می‌شود */
+    .main-nav {
+        display: none; /* پیش‌فرض مخفی */
+        flex-direction: column;
+        width: 100%;
+        margin-top: 15px;
+        background: rgba(22, 27, 34, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 10px;
+        padding: 10px;
+        border: 1px solid var(--glass-border);
+        animation: fadeIn 0.3s ease;
+    }
+
+    /* کلاسی که با جاوااسکریپت اضافه می‌شود */
+    .main-nav.active {
+        display: flex;
+    }
+
+    .nav-link {
+        width: 100%;
+        text-align: center;
+        padding: 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    .nav-link:last-child {
+        border-bottom: none;
+    }
+}
+
+/* --- Mobile Header & Side-Drawer Menu --- */
+
+/* 1. تنظیمات هدر برای موبایل (لوگو و دکمه همیشه دیده شود) */
+@media (max-width: 768px) {
+    .top-header {
+        padding: 10px 0; /* کاهش ارتفاع هدر */
+        background-color: var(--bg-light); 
+        position: sticky;
+        top: 0;
+        z-index: 1000; /* اطمینان از نمایش بالای محتوا */
+    }
+
+    .top-header .container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: nowrap;
+    }
+
+    .logo {
+        font-size: 18px; /* لوگو کوچکتر */
+    }
+
+    /* لینک‌های دسکتاپ را کلاً از دید موبایل حذف کنید */
+    .main-nav {
+        display: none;
+    }
+
+    /* دکمه باز کردن منو (به شکل یک دکمه زیبا) */
+    .menu-toggle {
+        display: block; 
+        font-size: 20px;
+        padding: 5px 10px;
+        background: var(--accent-primary);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .menu-toggle:hover {
+        background-color: #3e8e41; /* رنگ کمی تیره‌تر */
+    }
+}
+
+
+/* 2. استایل منوی کشویی (Side Drawer) */
+/* 2. استایل منوی کشویی (Side Drawer) - اصلاح شده برای رفع شفافیت و مخفی شدن کامل */
+/* 2. استایل منوی کشویی (Side Drawer) - اصلاح شده برای رفع شفافیت */
+#side-menu {
+    position: fixed;
+    top: 0;
+    right: -350px; 
+    width: 280px;
+    max-width: 80%;
+    
+    /* === اصلاح مهم: استفاده از رنگ مات === */
+    background-color: var(--bg-dark); /* رنگ کاملا تیره و مات */
+    
+    border-left: 1px solid var(--border-color); 
+    z-index: 2000;
+    padding: 20px;
+    padding-top: 20px;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.8); 
+    transition: right 0.3s ease-in-out; 
+    display: flex;
+    flex-direction: column;
+}
+
+#side-menu.active {
+    right: 0; 
+}
+
+/* بقیه استایل‌های #side-menu و .side-menu-overlay بدون تغییر باقی می‌ماند. */
+
+#side-menu .nav-link {
+    display: block;
+    padding: 15px 10px;
+    margin-bottom: 5px;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    font-size: 16px;
+}
+
+#side-menu .nav-link:hover,
+#side-menu .nav-link.active {
+    background-color: var(--accent-primary);
+    color: #fff;
+}
+
+/* 3. پوشش برای تاریک کردن صفحه */
+/* 3. پوشش برای تاریک کردن و بلور صفحه */
+.side-menu-overlay {
+    /* ابتدا مخفی کامل */
+    display: block; 
+    opacity: 0;
+    visibility: hidden;
+    
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* === اصلاح مهم: بلور و تاریک‌سازی === */
+    background: rgba(0, 0, 0, 0.5); /* تاریک‌سازی */
+    backdrop-filter: blur(5px); /* بلور شیشه‌ای */
+    -webkit-backdrop-filter: blur(5px); /* برای سازگاری با سافاری */
+    
+    z-index: 1999; 
+    cursor: pointer;
+    transition: opacity 0.3s ease, visibility 0.3s ease; /* انیمیشن نرم */
+}
+
+.side-menu-overlay.active {
+    visibility: visible;
+    opacity: 1; /* نمایش با انیمیشن */
+}

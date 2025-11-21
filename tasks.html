@@ -14,6 +14,8 @@
     <header class="top-header">
         <div class="container">
             <div class="logo">سیستم کلاسی 904</div>
+            <button class="menu-toggle" id="mobile-menu-btn" aria-label="منو">☰</button>
+            
             <nav class="main-nav">
                 <a href="index.html" class="nav-link">خانه</a>
                 <a href="tasks.html" class="nav-link active">مشاهده تکالیف</a>
@@ -23,6 +25,17 @@
             </nav>
         </div>
     </header>
+
+    <nav id="side-menu">
+        <div class="logo" style="margin-bottom: 20px; font-size: 20px;">سیستم کلاسی 904</div>
+        <a href="index.html" class="nav-link">خانه</a>
+        <a href="tasks.html" class="nav-link active">مشاهده تکالیف</a>
+        <a href="schedule.html" class="nav-link">برنامه هفتگی</a>
+        <a href="preparation.html" class="nav-link">آمادگی تعیین مرکز</a>
+        <a href="calendar.html" class="nav-link">تقویم آموزشی</a>
+    </nav>
+
+    <div class="side-menu-overlay" id="menu-overlay"></div>
 
 <main>
         <div class="container">
@@ -74,5 +87,37 @@
     <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
 
     <script src="script.js"></script>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const sideMenu = document.getElementById('side-menu');
+            const menuOverlay = document.getElementById('menu-overlay');
+            
+            function toggleMenu(state) {
+                if (state === 'open') {
+                    // فعال‌سازی منو و بلور
+                    sideMenu.classList.add('active');
+                    menuOverlay.classList.add('active');
+                } else {
+                    // غیرفعال‌سازی منو و بلور
+                    sideMenu.classList.remove('active');
+                    menuOverlay.classList.remove('active');
+                }
+            }
+
+            if (menuBtn && sideMenu && menuOverlay) {
+                menuBtn.addEventListener('click', () => toggleMenu('open'));
+                menuOverlay.addEventListener('click', () => toggleMenu('close'));
+
+                const navLinks = sideMenu.querySelectorAll('.nav-link');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        // بستن منو بعد از کلیک روی لینک
+                        setTimeout(() => toggleMenu('close'), 100); 
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 </html>
