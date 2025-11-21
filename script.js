@@ -2,12 +2,15 @@ const DAYS = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چ
 
 async function loadAndRender() {
     try {
-        // Fetch data from the JSON file
         const res = await fetch('data.json', { cache: 'no-store' });
         if (!res.ok) {
             throw new Error(`HTTP error! status: ${res.status}`);
         }
-        const tasks = await res.json();
+        
+        // تغییر اصلی اینجاست: دریافت کل آبجکت
+        const data = await res.json();
+        // استخراج آرایه تسک‌ها
+        const tasks = data.tasks || []; 
 
         // Group tasks by day
         const grouped = {};
@@ -20,15 +23,12 @@ async function loadAndRender() {
         });
 
         const cardsContainer = document.getElementById('cards');
-        cardsContainer.innerHTML = ''; // Clear previous content
+        cardsContainer.innerHTML = '';
 
-        // Render cards for each day
         DAYS.forEach((day, index) => {
             const card = document.createElement('article');
             card.className = 'card';
-            // Add a staggered animation delay
             card.style.animationDelay = `${index * 50}ms`;
-
 
             const h3 = document.createElement('h3');
             h3.className = 'day-title';
@@ -41,6 +41,7 @@ async function loadAndRender() {
             if (tasksForDay.length === 0) {
                 const empty = document.createElement('div');
                 empty.className = 'task';
+                empty.style.opacity = '0.6'; // کمی کمرنگ‌تر برای زیبایی
                 empty.textContent = 'تکلیفی ثبت نشده';
                 list.appendChild(empty);
             } else {
@@ -74,9 +75,8 @@ async function loadAndRender() {
         });
     } catch (err) {
         console.error(err);
-        document.getElementById('cards').innerHTML = '<div class="card error-card">خطا در بارگذاری تکالیف. لطفا از وجود فایل data.json و درستی محتوای آن اطمینان حاصل کنید.</div>';
+        document.getElementById('cards').innerHTML = '<div class="card error-card" style="color: #ff7b72;">خطا در بارگذاری تکالیف. لطفا فایل data.json را بررسی کنید.</div>';
     }
 }
 
-// Run the function when the page is loaded
 window.addEventListener('DOMContentLoaded', loadAndRender);

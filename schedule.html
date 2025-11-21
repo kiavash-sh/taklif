@@ -18,6 +18,7 @@
                 <a href="index.html" class="nav-link">خانه</a>
                 <a href="tasks.html" class="nav-link">مشاهده تکالیف</a>
                 <a href="schedule.html" class="nav-link active">برنامه هفتگی</a>
+                <a href="preparation.html" class="nav-link">آمادگی تعیین مرکز</a>
             </nav>
         </div>
     </header>
@@ -78,14 +79,14 @@
     </div>
 
     <footer class="bottom-footer">
-        <p>&copy; 1403 - تمام حقوق برای شما محفوظ است.</p>
+        <p>&copy; 1404 - تمام حقوق برای شما محفوظ است.</p>
     </footer>
 
-    <script>
+<script>
         document.addEventListener('DOMContentLoaded', function() {
             let allTasks = [];
+            let currentWeekType = 'even'; // مقدار پیش‌فرض
 
-            // --- NEW: ALIAS MAP FOR SUBJECTS ---
             const subjectAliases = {
                 'جبر': ['جبر', 'ریاضی'],
                 'هندسه': ['هندسه', 'ریاضی'],
@@ -97,8 +98,6 @@
                 'زبان انگلیسی': ['زبان انگلیسی', 'زبان'],
                 'تربیت بدنی': ['تربیت بدنی', 'ورزش'],
                 'پیام آسمانی': ['پیام آسمانی', 'پیام', 'پیام اسمانی']
-                // Subjects without aliases don't need to be listed but it's good practice
-                // 'نگارش': ['نگارش'], 
             };
             
             function normalizeString(str) {
@@ -109,26 +108,43 @@
             async function fetchData() {
                 try {
                     const res = await fetch('data.json', { cache: 'no-store' });
-                    if (!res.ok) throw new Error('Failed to load tasks data');
-                    allTasks = await res.json();
-                } catch (error) { console.error(error); }
+                    if (!res.ok) throw new Error('Failed to load data');
+                    
+                    // خواندن ساختار جدید
+                    const data = await res.json();
+                    allTasks = data.tasks || [];
+                    
+                    // خواندن نوع هفته از جیسون
+                    if (data.weekType) {
+                        currentWeekType = data.weekType; // 'odd' or 'even'
+                    }
+                    
+                } catch (error) { 
+                    console.error(error);
+                    // Fallback if needed
+                    currentWeekType = 'even';
+                }
             }
 
             function initializeSchedule() {
-                // ... (This function remains unchanged)
-                function getWeekNumber(d) {
-                    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-                    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-                    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-                    return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-                }
-                const currentWeek = getWeekNumber(new Date());
-                const weekType = (currentWeek % 2 === 0) ? 'even' : 'odd';
-                document.getElementById('week-status').textContent = (weekType === 'even') ? 'هفته زوج' : 'هفته فرد';
+                // نمایش متن وضعیت هفته
+                const statusText = document.getElementById('week-status');
+                statusText.textContent = (currentWeekType === 'even') ? 'هفته زوج' : 'هفته فرد';
+                
+                // رنگ‌آمیزی برای تاکید بیشتر روی وضعیت هفته
+                statusText.style.color = 'var(--accent-primary)';
+                statusText.style.textShadow = '0 0 10px rgba(88, 166, 255, 0.5)';
+
+                // فعال/غیرفعال کردن کلاس‌ها
                 document.querySelectorAll('.alternating .subject').forEach(cell => {
                     const odd = cell.querySelector('[data-week="odd"]');
                     const even = cell.querySelector('[data-week="even"]');
-                    if (weekType === 'even') {
+                    
+                    // پاک کردن کلاس‌های قبلی
+                    odd.classList.remove('active', 'inactive');
+                    even.classList.remove('active', 'inactive');
+
+                    if (currentWeekType === 'even') {
                         even.classList.add('active');
                         odd.classList.add('inactive');
                     } else {
@@ -138,6 +154,8 @@
                 });
             }
 
+            // ... (کد مربوط به مودال و ایونت لیسنرها بدون تغییر باقی می‌ماند، فقط بخش logic filtering از allTasks استفاده می‌کند که قبلا اصلاح شد) ...
+            
             const overlay = document.getElementById('task-overlay');
             const modalTitle = document.getElementById('modal-title');
             const modalBody = document.getElementById('modal-body');
@@ -197,14 +215,11 @@
                                 modalTitleText = `تکالیف درس: ${subject}`;
                             }
 
-                            // --- MODIFIED: Smart filtering logic ---
                             const relatedTasks = allTasks.filter(task => {
                                 const isCorrectDay = normalizeString(task.day) === normalizeString(day);
                                 if (!isCorrectDay) return false;
 
                                 const normalizedTaskTitle = normalizeString(task.title);
-                                
-                                // Check if the task title matches any alias of the main subjects for this cell
                                 return mainSubjects.some(mainSubject => {
                                     const aliases = subjectAliases[mainSubject] || [mainSubject];
                                     const normalizedAliases = aliases.map(alias => normalizeString(alias));
@@ -219,8 +234,8 @@
             }
 
             async function main() {
-                await fetchData();
-                initializeSchedule();
+                await fetchData(); // اول دیتا و نوع هفته را می‌گیرد
+                initializeSchedule(); // بعد UI را آپدیت می‌کند
                 setupEventListeners();
             }
 
