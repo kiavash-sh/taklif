@@ -7,8 +7,24 @@
   "scope": "/",
   "short_name": "SEN",
   "start_url": "/index.html",
-  "theme_color": "#ffffff"
+  "theme_color": "#ffffff",
+  "icons": [
+  {
+      "src": "https://kiavash-sh.github.io/taklif/192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+  },
+  {
+      "src": "https://kiavash-sh.github.io/taklif/512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+  }
+]
+
 }
+
 
 
 
