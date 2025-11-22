@@ -1,0 +1,11 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "SEN",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "SEN",
+  "start_url": "/index.html",
+  "theme_color": "#ffffff"
+}
